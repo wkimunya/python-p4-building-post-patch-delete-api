@@ -143,6 +143,7 @@ def review_by_id(id):
             )
 
             return response
+        
 
 @app.route('/users')
 def users():
@@ -159,13 +160,14 @@ def users():
 
     return response
 
+
 @app.route('/baked_goods', methods=['POST'])
 def add_baked_good():
     data = request.get_json()
     new_baked_good = BakedGood(**data)
     db.session.add(new_baked_good)
     db.session.commit()
-    return jsonify(new_baked_good.to_dict()), 201  # 201 Created
+    return jsonify(new_baked_good.to_dict()), 201  
 
 @app.route('/bakeries/<int:id>', methods=['PATCH'])
 def update_bakery(id):
@@ -174,9 +176,9 @@ def update_bakery(id):
         data = request.get_json()
         bakery.update(data)
         db.session.commit()
-        return jsonify(bakery.to_dict()), 200  # 200 OK
+        return jsonify(bakery.to_dict()), 200  
     else:
-        return jsonify({'error': 'Bakery not found'}), 404  # 404 Not Found
+        return jsonify({'error': 'Bakery not found'}), 404 
     
 if __name__ == '__main__':
     app.run(port=5555)
