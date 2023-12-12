@@ -5,6 +5,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from models import db, User, Review, Game
+import logging
+
+logging.basicConfig(filename='app.log', level=logging.DEBUG)
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -155,5 +159,24 @@ def users():
 
     return response
 
+@app.route('/baked_goods', methods=['POST'])
+def add_baked_good():
+    data = request.get_json()
+    new_baked_good = BakedGood(**data)
+    db.session.add(new_baked_good)
+    db.session.commit()
+    return jsonify(new_baked_good.to_dict()), 201  # 201 Created
+
+@app.route('/bakeries/<int:id>', methods=['PATCH'])
+def update_bakery(id):
+    bakery = Bakery.query.get(id)
+    if bakery:
+        data = request.get_json()
+        bakery.update(data)
+        db.session.commit()
+        return jsonify(bakery.to_dict()), 200  # 200 OK
+    else:
+        return jsonify({'error': 'Bakery not found'}), 404  # 404 Not Found
+    
 if __name__ == '__main__':
     app.run(port=5555)
